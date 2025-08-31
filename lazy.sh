@@ -98,11 +98,11 @@ lazy_rm() {
   clear
 }
 
-# Check for changes to files - delete and rebuild new container 
+# Check for changes to files - delete, rebuild and run new container. 
 lazy_watch() {
   last_mod=0
   while true; do
-    new_mod=$(stat -c %Y *.py)   # %Y = epoch modtime (Linux)
+    new_mod=$(stat -c %Y *.py) 
     if [[ $new_mod != $last_mod ]]; then
       lazy_rm 
       lazy_build 
@@ -190,12 +190,24 @@ echo "$VERSION_TAG"
 # lazy fish shell completion
 _lazy_fish_complete() {
   cat <<'EOF'
-# Fish completion for lazy.sh
-complete -c lazy.sh -a build -d "Build/Run the container"
-complete -c lazy.sh -a remove -d "Remove container/image"
-complete -c lazy.sh -a watch -d "Watch files and rebuild"
-complete -c lazy.sh -a help -d "Show help"
-complete -c lazy.sh -a --complete -d "Show available shell completion"
+# Fish completion and description for lazy
+complete -c lazy -a build -d "Build the container"
+complete -c lazy -a run -d "Run the container"
+complete -c lazy -a rm -d "Remove container and image"
+complete -c lazy -a watch -d "Watch for changes and rebuild"
+complete -c lazy -a new -d "Add default lazy files in current directory."
+complete -c lazy -a version -d "Print lazy version."
+complete -c lazy -a help -d "Show help"
+# just shell completion for lazy no description
+complete -c lazy -l --help 
+complete -c lazy -l --build
+complete -c lazy -l --run 
+complete -c lazy -l --rm
+complete -c lazy -l --watch
+complete -c lazy -l --help 
+complete -c lazy -l --complete 
+complete -c lazy -l --version 
+complete -c lazy -l --new
 EOF
 }
 
@@ -224,8 +236,8 @@ lazy_shell_complete() {
   echo "Fish Completion:"
   _lazy_fish_complete
   echo
-  echo "save to ~/.config/fish/completions/lazy.sh.fish"
-  echo "./lazy.sh --complete=fish > ~/.config/fish/completions/lazy.sh.fish"
+  echo "save to ~/.config/fish/completions/lazy.fish"
+  echo "./lazy.sh --complete=fish > ~/.config/fish/completions/lazy.fish"
 }
 
 # install lazy to ~/.local/bin 
@@ -272,8 +284,8 @@ lazy_install() {
 for arg in "$@"; do
   case "$arg" in
     --complete|complete) lazy_shell_complete ;;
-    --complete=bash) lazy_bash_complete ;;
-    --complete=fish) lazy_fish_complete ;;
+    --complete=bash) _lazy_bash_complete ;;
+    --complete=fish) _lazy_fish_complete ;;
     install|--install) lazy_install ;;
     n|-n|new|--new) lazy_new;;
     h|-h|--help|help) lazy_help | less ;;
