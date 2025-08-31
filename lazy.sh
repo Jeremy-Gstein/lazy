@@ -199,15 +199,15 @@ complete -c lazy -a new -d "Add default lazy files in current directory."
 complete -c lazy -a version -d "Print lazy version."
 complete -c lazy -a help -d "Show help"
 # just shell completion for lazy no description
-complete -c lazy -l --help 
-complete -c lazy -l --build
-complete -c lazy -l --run 
-complete -c lazy -l --rm
-complete -c lazy -l --watch
-complete -c lazy -l --help 
-complete -c lazy -l --complete 
-complete -c lazy -l --version 
-complete -c lazy -l --new
+complete -c lazy -l help 
+complete -c lazy -l build
+complete -c lazy -l run 
+complete -c lazy -l rm
+complete -c lazy -l watch
+complete -c lazy -l help 
+complete -c lazy -l complete 
+complete -c lazy -l version 
+complete -c lazy -l new
 EOF
 }
 
