@@ -1,5 +1,5 @@
 # lazy - manage your project containers. (the lazy way)
-```bash
+```
 Description:  
   lazy is a tool inspired by cargo and other similar tools.
   build, run, remove, watch, initialize projects with dockerfiles.
@@ -32,7 +32,4 @@ LAZY:
   NAME="FOO
   IMAGE="BAR"
   DOCKERFILE="/path/to/dockerfile"
-
-Author:
-  Jeremy Grosenstein - jeremy51b5@pm.me
 ```
