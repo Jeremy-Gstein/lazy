@@ -171,7 +171,6 @@ Options:
   --install               Install lazy to ~/.local/share, ~/.config/.lazy
   --update                Update lazy from remote githup repo. 
 
-
 Examples:
 LAZY:
   lazy --help 
@@ -185,6 +184,13 @@ LAZY:
 
 Author:
   Jeremy Grosenstein - jeremy51b5@pm.me
+
+License:
+  MIT License
+  Copyright (c) 2025 Jeremy
+  Licensed under the MIT License. See LICENSE file in the project root for details.
+  A copy can be found online at this github repo: https://github.com/Jeremy-Gstein/lazy/blob/main/LICENSE
+  
 EOF
 echo "$VERSION_TAG"
 }
