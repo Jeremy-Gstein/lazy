@@ -2,7 +2,7 @@
 
 # ./lazy - a lazy tool to manage containers.
 #        inspired by cargo!
-VERSION="0.0.1"
+VERSION="0.1.1"
 VERSION_TAG="lazy - v$VERSION"
 
 ##########
@@ -169,6 +169,8 @@ Options:
   -v,  --version          Show current version of lazy.
   --complete              Add shell completetion for all lazy commands.
   --install               Install lazy to ~/.local/share, ~/.config/.lazy
+  --update                Update lazy from remote githup repo. 
+
 
 Examples:
 LAZY:
@@ -198,6 +200,7 @@ complete -c lazy -a watch -d "Watch for changes and rebuild"
 complete -c lazy -a new -d "Add default lazy files in current directory."
 complete -c lazy -a version -d "Print lazy version."
 complete -c lazy -a help -d "Show help"
+complete -c lazy -a update -d "Update to latest lazy version."
 # just shell completion for lazy no description
 complete -c lazy -l help 
 complete -c lazy -l build
@@ -208,6 +211,7 @@ complete -c lazy -l help
 complete -c lazy -l complete 
 complete -c lazy -l version 
 complete -c lazy -l new
+complete -c lazy -l update
 EOF
 }
 
@@ -240,6 +244,38 @@ lazy_shell_complete() {
   echo "./lazy.sh --complete=fish > ~/.config/fish/completions/lazy.fish"
 }
 
+# update to latest lazy version from main branch.
+lazy_update() {
+  INSTALL_TARGET="$HOME/.local/share/lazy"
+  REPO_URL="https://raw.githubusercontent.com/Jeremy-Gstein/lazy"
+  MAIN_BRANCH="main/lazy.sh"
+  REPO="$REPO_URL/$MAIN_BRANCH"
+ 
+  # check if we have lazy Installed
+  if [[ ! -f "$INSTALL_TARGET" ]]; then
+    echo "lazy not found. Run install first!."
+    return 1
+  fi
+
+  # create a tempfile and curl main to it.
+  tmpfile=$(mktemp)
+  if ! curl -fsSL "$REPO" -o "$tmpfile"; then
+    echo "Error: failed to fetch $REPO"
+    rm -f "$tmpfile"
+    return 1
+  fi
+
+  # check if local and remote in sync.
+  if ! diff -q "$tmpfile" "$INSTALL_TARGET" >/dev/null; then
+    mv "$tmpfile" "$INSTALL_TARGET"
+    chmod +x "$INSTALL_TARGET"
+    echo "Updated lazy: $MAIN_BRANCH -> $INSTALL_TARGET"
+  else
+    echo "No Update: $INSTALL_TARGET in sync with $MAIN_BRANCH"
+    rm "$tmpfile"
+  fi
+}
+
 # install lazy to ~/.local/bin 
 # create ~/.config/.lazy file 
 lazy_install() {
@@ -247,6 +283,7 @@ lazy_install() {
   INSTALL_TARGET="$HOME/.local/share/lazy"
   CONFIG_PATH="$HOME/.config/.lazy"
   cp ./lazy.sh "$INSTALL_TARGET"
+  chmod +x "$INSTALL_TARGET"
   touch "$CONFIG_PATH"
   # check if lazy exists and ask to delete it before linking.
   if [[ -e "$LINK_TARGET" ]]; then
@@ -255,6 +292,7 @@ lazy_install() {
       y|Y)
         rm -f "$LINK_TARGET"
         ln -s $INSTALL_TARGET $LINK_TARGET
+        sleep 1
         clear
         echo "Installed new lazy -> ~/.local/bin/lazy"
         ;;
@@ -286,7 +324,8 @@ for arg in "$@"; do
     --complete|complete) lazy_shell_complete ;;
     --complete=bash) _lazy_bash_complete ;;
     --complete=fish) _lazy_fish_complete ;;
-    install|--install) lazy_install ;;
+    i|install|--install) lazy_install ;;
+    u|update|--update) lazy_update ;;
     n|-n|new|--new) lazy_new;;
     h|-h|--help|help) lazy_help | less ;;
     v|-v|version|--version) lazy_help "$VERSION" ;;
@@ -304,5 +343,5 @@ done
 if [[ $# -eq 0 ]]; then 
   # show brief version of --help.
   # removing color from grep with tee.
-  lazy_help | grep -A 20 Synopsis | tee /dev/null 
+  lazy_help | grep -A 21 Synopsis | tee /dev/null 
 fi
