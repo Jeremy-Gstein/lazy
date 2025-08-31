@@ -33,3 +33,5 @@ LAZY:
   IMAGE="BAR"
   DOCKERFILE="/path/to/dockerfile"
 ```
+> [!NOTE]
+> a fun weekend project to help with developing projects in docker.
