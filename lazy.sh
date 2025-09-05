@@ -242,7 +242,8 @@ lazy_shell_complete() {
   echo "Bash Completion:"
   _lazy_bash_complete
   echo
-  echo "source <(./lazy.sh --complete=bash)"
+  echo "source <(~/.local/bin/lazy --complete=bash)"
+  echo 'alias lazy="~/.local/bin/lazy"'
   echo "Fish Completion:"
   _lazy_fish_complete
   echo
@@ -300,23 +301,47 @@ lazy_install() {
         ln -s $INSTALL_TARGET $LINK_TARGET
         sleep 1
         clear
-        echo "Installed new lazy -> ~/.local/bin/lazy"
+        echo "Installed new lazy -> $LINK_TARGET"
         ;;
       *)
         echo "Canceled install NOT overwriting existing lazy ($LINK_TARGET)"
         exit 0
         ;;
     esac
-  else
+  elif [[ -e ~/.local/bin ]]; then
+    # Check if ~/.local/bin exists before linking 
     ln -s "$INSTALL_TARGET" "$LINK_TARGET"
     echo "Installed lazy -> ~/.local/bin/lazy"
+  else
+    # If we dont find ~/.local/bin ask to create a new
+    read -p "Missing $LINK_TARGET directory... 
+             > Create the directory now? [y/N]: " choice
+    case "$choice" in 
+      y|Y)
+        mkdir '~/.local/bin' && \ 
+          ln -s $INSTALL_TARGET $LINK_TARGET
+        sleep 1
+        clear
+        echo "Installed new lazy -> $LINK_TARGET"
+        ;;
+      n|N)
+        echo "Canceled install NOT overwriting existing lazy ($LINK_TARGET)"
+        exit 0
+        ;;
+      *)
+        echo "Error Installing... Unable to find valid path." 
+        exit 1
+        ;;
+    esac
   fi 
   # PATH/alias examples:
-  echo "if $INSTALL_TARGET not in PATH:"
-  echo "install for system (requires root/sudo)"
-  echo "  - sudo ln -sf $INSTALL_TARGET $LINK_TARGET"
-  echo "add as alias to .bashrc"
-  echo "  - alias --save $LINK_TARGET"
+  echo; echo
+  echo "if $INSTALL_TARGET not in PATH:
+  install for system (requires root/sudo)
+        # sudo ln -sf $INSTALL_TARGET $LINK_TARGET
+        
+  add as alias to .bashrc
+        # alias --save $LINK_TARGET"
 
 }
 
