@@ -2,7 +2,7 @@
 
 # ./lazy - a lazy tool to manage containers.
 #        inspired by cargo!
-VERSION="0.1.1"
+VERSION="0.1.2"
 VERSION_TAG="lazy - v$VERSION"
 
 ##########
