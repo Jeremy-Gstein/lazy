@@ -1,6 +1,7 @@
 pub mod rm;
 pub mod run;
 pub mod build;
+pub mod add;
 
 use crate::cli::Commands;
 use crate::config::LazyConfig;
@@ -8,8 +9,10 @@ use crate::config::LazyConfig;
 pub fn dispatch_command(cmd: Commands, config: &LazyConfig) {
     match cmd {
         Commands::Rm => rm::run(),
-        Commands::Run => run::run(),
+        Commands::Run => run::run(config),
         Commands::Build => build::run(config),
+        Commands::Add { package } => add::run(config, &package),
+
     }
 }
 

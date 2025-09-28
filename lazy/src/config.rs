@@ -8,6 +8,8 @@ pub struct LazyConfig {
     pub image_tag: String,
     pub image: String,
     pub dockerfile: String,
+    pub env: String,
+
 }
 
 impl LazyConfig {
@@ -39,6 +41,8 @@ impl LazyConfig {
                     "IMAGE_NAME" => config.image_name = val,
                     "IMAGE_TAG" => config.image_tag = val,
                     "DOCKERFILE" => config.dockerfile = val,
+                    "ENV" => config.env = val,
+
                     _ => {}
                 }
             }
@@ -49,7 +53,7 @@ impl LazyConfig {
     }
 }
 
-// Simple helper to parse a line like `KEY="VALUE"`
+// parse a line like `KEY="VALUE"`
 fn parse_key_val(line: &str) -> Option<(String, String)> {
     // Strip comments and empty lines
     let line = line.trim();
@@ -68,4 +72,3 @@ fn parse_key_val(line: &str) -> Option<(String, String)> {
     }
     Some((key, val))
 }
-

@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use clap::CommandFactory;
 
 #[derive(Parser, Debug)]
 #[command(name = "lazy", version, about, color = clap::ColorChoice::Always)]
@@ -15,5 +16,6 @@ pub enum Commands {
     Rm,
     Run,
     Build,
+    Add { package: String },
 }
 

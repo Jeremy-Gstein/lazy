@@ -42,9 +42,3 @@ pub fn run(config: &LazyConfig) {
     }
 }
 
-
-
-// pub fn run() {
-//     println!("Build logic.");
-//     // Actual remove logic (e.g., Command::new("docker").arg("build")...)
-// }

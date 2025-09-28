@@ -4,8 +4,9 @@ mod config;
 mod utils;
 
 use clap::Parser;
-use cli::Cli;
-use commands::{build, run, rm, dispatch_command};
+use clap::CommandFactory;
+use cli::{Cli, Commands};
+use commands::{add, build, run, rm, dispatch_command};
 use config::LazyConfig;
 
 fn main() {
@@ -13,20 +14,71 @@ fn main() {
     let config = LazyConfig::load_default().unwrap_or_default();
 
     if !cli.sequence.is_empty() {
-        for cmd_name in &cli.sequence {
+        // Interpret cli.sequence as commands or commands with arguments:
+        // For example: ["add", "curl", "build", "run"]
+        let mut args = cli.sequence.iter();
+
+        while let Some(cmd_name) = args.next() {
             match cmd_name.as_str() {
                 "rm" => rm::run(),
-                "run" => run::run(),
+                "run" => run::run(&config),
                 "build" => build::run(&config),
-                _ => eprintln!("Unknown command {}", cmd_name),
+                "add" => {
+                    // Get package name argument
+                    if let Some(pkg) = args.next() {
+                        add::run(&config, pkg);
+                    } else {
+                        eprintln!("Error: 'add' command requires a package name argument");
+                        std::process::exit(1);
+                    }
+                }
+                unknown => {
+                    eprintln!("Unknown command in sequence: {}", unknown);
+                    std::process::exit(1);
+                }
             }
         }
     } else if let Some(cmd) = cli.command {
         dispatch_command(cmd, &config);
+    } else {
+        // If no args passed, print help
+        Cli::command().print_help().unwrap();
     }
 }
 
 
+
+// mod cli;
+// mod commands;
+// mod config;
+// mod utils;
+//
+// use clap::Parser;
+// use cli::Cli;
+// use commands::{add, build, run, rm, dispatch_command};
+// use config::LazyConfig;
+//
+// fn main() {
+//     let cli = Cli::parse();
+//     let config = LazyConfig::load_default().unwrap_or_default();
+//
+//     if !cli.sequence.is_empty() {
+//         for cmd_name in &cli.sequence {
+//             match cmd_name.as_str() {
+//                 "rm" => rm::run(),
+//                 "run" => run::run(&config),
+//                 "build" => build::run(&config),
+//                 "add" => add::run(&config),
+//                 _ => todo!(),
+//                 //_ => eprintln!("Unknown command {}", cmd_name),
+//             }
+//         }
+//     } else if let Some(cmd) = cli.command {
+//         dispatch_command(cmd, &config);
+//     }
+// }
+//
+//
 
 
 // mod cli;
